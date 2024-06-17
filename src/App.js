@@ -39,6 +39,7 @@ export default function App() {
 
   function handleAddNewFriend(friend) {
     setFriends((friends) => [...friends, friend]);
+    setShowAddFriend(false);
   }
 
   return (
@@ -104,7 +105,7 @@ function FormAddFriend({ onAddFriend }) {
     const newFriend = {
       id,
       name,
-      image: `{image}/?=${id}`,
+      image: `${image}?=${id}`,
       balance: 0,
     };
 
