@@ -30,17 +30,22 @@ function Button({ children, onClick }) {
 }
 
 export default function App() {
+  const [friends, setFriends] = useState(initialFriends);
   const [showAddFriend, setShowAddFriend] = useState(false);
 
   function handleAddFriend() {
     setShowAddFriend((show) => !show);
   }
 
+  function handleAddNewFriend(friend) {
+    setFriends((friends) => [...friends, friend]);
+  }
+
   return (
     <div className="app">
       <div className="sidebar">
-        <Friends />
-        {showAddFriend && <FormAddFriend />}
+        <Friends friends={friends} />
+        {showAddFriend && <FormAddFriend onAddFriend={handleAddNewFriend} />}
         <Button onClick={handleAddFriend}>
           {showAddFriend ? "Close" : "Add friend"}
         </Button>
@@ -50,9 +55,7 @@ export default function App() {
   );
 }
 
-function Friends() {
-  const friends = initialFriends;
-
+function Friends({ friends }) {
   return (
     <>
       <ul>
@@ -87,14 +90,45 @@ function Friend({ friend }) {
   );
 }
 
-function FormAddFriend() {
+function FormAddFriend({ onAddFriend }) {
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("https://i.pravatar.cc/48");
+
+  const id = crypto.randomUUID();
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!name || !image) return;
+
+    const newFriend = {
+      id,
+      name,
+      image: `{image}/?=${id}`,
+      balance: 0,
+    };
+
+    onAddFriend(newFriend);
+
+    setName("");
+    setImage("https://i.pravatar.cc/48");
+  }
+
   return (
-    <form className="form-add-friend">
+    <form className="form-add-friend" onSubmit={handleSubmit}>
       <label>👨🏿‍🤝‍👨🏽Fiend Name</label>
-      <input type="text" />
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
 
       <label>🌇Image URL</label>
-      <input type="text" />
+      <input
+        type="text"
+        value={image}
+        onChange={(e) => setImage(e.target.value)}
+      />
 
       <Button>Select</Button>
     </form>
